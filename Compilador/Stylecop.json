@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json.schemastore.org/stylecop",
+  "settings": {
+    "rules": {
+      "orderingRules": {
+        "usingDirectivesPlacement": "insideNamespace"
+      },
+      "readabilityRules": {
+        "allowBuiltInTypeAliases": true,
+        "prefixFieldIdentifiersWithUnderscore": true
+      },
+      "maintainabilityRules": {
+        "allowOneStatementPerLine": false
+      },
+      "layoutRules": {
+        "newlineAtEndOfFile": "require"
+      },
+      "documentationRules": {
+        "documentExposedElements": true,
+        "documentInterfaces": true,
+        "documentInternalElements": false
+      }
+    }
+  }
+}

@@ -1,13 +1,8 @@
-﻿using MaterialSkin;
-using MaterialSkin.Controls;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Compilador
+﻿namespace Compilador
 {
+    using MaterialSkin;
+    using MaterialSkin.Controls;
+
     public class MaterialUI
     {
         public static void cargarMaterial(MaterialForm actualForm)

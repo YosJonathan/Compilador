@@ -23,7 +23,7 @@ namespace Compilador
             MaterialUI.cargarMaterial(this);
             LlenarDataGridView();
         }
-        
+
 
 
         private void LlenarDataGridView()
@@ -35,11 +35,13 @@ namespace Compilador
             dt.Columns.Add("Operadores");
             dt.Columns.Add("Símbolos");
             dt.Columns.Add("Cadenas de Texto");
+            dt.Columns.Add("Directivas Preprocesador");
 
             // Obtener la cantidad máxima de elementos en todas las listas
             int maxFilas = new List<int> {
                 respuesta.PalabrasReservadas.Count, respuesta.Identificadores.Count, respuesta.Numeros.Count,
-                respuesta.Operadores.Count, respuesta.Simbolos.Count, respuesta.CadenasTexto.Count
+                respuesta.Operadores.Count, respuesta.Simbolos.Count, respuesta.CadenasTexto.Count,
+                respuesta.DirectivasPreprocesador.Count,
             }.Max();
 
             // Llenar las filas con los datos, dejando vacío cuando no haya más elementos en una lista
@@ -51,12 +53,18 @@ namespace Compilador
                     i < respuesta.Numeros.Count ? respuesta.Numeros[i] : "",
                     i < respuesta.Operadores.Count ? respuesta.Operadores[i] : "",
                     i < respuesta.Simbolos.Count ? respuesta.Simbolos[i] : "",
-                    i < respuesta.CadenasTexto.Count ? respuesta.CadenasTexto[i] : ""
+                    i < respuesta.CadenasTexto.Count ? respuesta.CadenasTexto[i] : "",
+                    i < respuesta.DirectivasPreprocesador.Count ? respuesta.DirectivasPreprocesador[i] : ""
                 );
             }
 
             dataGridView1.DataSource = dt;
             dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill; // Ajustar columnas al tamaño
+        }
+
+        private void RespuestaLexico_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

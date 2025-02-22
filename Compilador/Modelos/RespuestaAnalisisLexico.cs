@@ -16,6 +16,8 @@ namespace Compilador.Modelos
         public List<string> Simbolos { get; set; } = new List<string>();
         public List<string> CadenasTexto { get; set; } = new List<string>();
 
+        public List<string> DirectivasPreprocesador { get; set; } = new List<string>();
+
         public string ConvertirAJson()
         {
             return JsonSerializer.Serialize(this, new JsonSerializerOptions { WriteIndented = true });

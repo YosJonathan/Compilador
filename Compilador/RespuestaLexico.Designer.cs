@@ -49,6 +49,7 @@
             Controls.Add(dataGridView1);
             Name = "RespuestaLexico";
             Text = "RespuestaLexico";
+            Load += RespuestaLexico_Load;
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ResumeLayout(false);
         }
