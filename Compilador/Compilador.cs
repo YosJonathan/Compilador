@@ -4,9 +4,9 @@
 
 namespace Compilador
 {
-    using Modelos;
-    using MaterialSkin.Controls;
     using global::Compilador.FrontEnd;
+    using global::Compilador.Modelos;
+    using global::MaterialSkin.Controls;
 
     /// <summary>
     /// Clase de compilador.
@@ -32,7 +32,7 @@ namespace Compilador
         /// </summary>
         /// <param name="sender">Sender.</param>
         /// <param name="e">e.</param>
-        private void abrirArchivotxtToolStripMenuItem_Click(object sender, EventArgs e)
+        private void AbrirArchivotxtToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Crear y configurar el cuadro de diálogo
             OpenFileDialog openFileDialog = new OpenFileDialog
@@ -52,7 +52,7 @@ namespace Compilador
             }
         }
 
-        private void analizadorLexicoToolStripMenuItem_Click(object sender, EventArgs e)
+        private void AnalizadorLexicoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             string cadenaaAnalizar = this.txtCompilador.Text;
 
@@ -73,6 +73,30 @@ namespace Compilador
                     MessageBox.Show(error);
                 }
             }
+        }
+
+        private async void TablaDeSimbolosToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string cadenaaAnalizar = this.txtCompilador.Text;
+
+            TablaSimbolos analizador = new TablaSimbolos();
+            await analizador.AnalizarCodigoAsync(cadenaaAnalizar);
+
+            if (analizador.TieneErrores())
+            {
+                List<string> errores = analizador.ObtenerErrores();
+                foreach (string error in errores)
+                {
+                    MessageBox.Show(error);
+                }
+
+                return;
+            }
+
+            Dictionary<string, Simbolo> resultado = analizador.MostrarTabla();
+
+            RespuestaTablaSimbolo formGraficos = new RespuestaTablaSimbolo(resultado);
+            formGraficos.Show();
         }
     }
 }

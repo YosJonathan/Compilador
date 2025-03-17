@@ -34,7 +34,6 @@ namespace Compilador.FrontEnd
         private static readonly Regex RegexCadenaTexto = new Regex("\"([^\"]*)\""); // Para cadenas de texto entre comillas dobles
         private static readonly Regex RegexDirectivaPreprocesador = new Regex(@"^#\w+$");
 
-
         /// <summary>
         /// Initializes a new instance of the <see cref="AnalizadorLexico"/> class.
         /// </summary>
@@ -120,6 +119,5 @@ namespace Compilador.FrontEnd
         {
             return this.manejadorErrores.ObtenerErrores();
         }
-
     }
 }
