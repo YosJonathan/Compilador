@@ -1,12 +1,14 @@
-// <copyright file="Compilador.cs" company="PlaceholderCompany">
+﻿// <copyright file="Compilador.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
 namespace Compilador
 {
+    using System.Windows.Forms;
     using global::Compilador.FrontEnd;
     using global::Compilador.Modelos;
     using global::MaterialSkin.Controls;
+    using Irony.Parsing;
 
     /// <summary>
     /// Clase de compilador.
@@ -25,23 +27,29 @@ namespace Compilador
         private void Compilador_Load(object sender, EventArgs e)
         {
             this.txtCompilador.Text = string.Empty;
+
+            // Leer el contenido del archivo seleccionado
+            string contenido = File.ReadAllText("C:\\Users\\YOS\\Documents\\sdfsdfsdf.txt");
+
+            // Mostrar el contenido en el TextBox
+            this.txtCompilador.Text = contenido;
         }
 
         /// <summary>
-        /// Abrir archivo txt opci�n del menu.
+        /// Abrir archivo txt opción del menu.
         /// </summary>
         /// <param name="sender">Sender.</param>
         /// <param name="e">e.</param>
         private void AbrirArchivotxtToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // Crear y configurar el cuadro de di�logo
+            // Crear y configurar el cuadro de diálogo
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
                 Filter = "Archivos de texto (*.txt)|*.txt|Todos los archivos (*.*)|*.*",
                 Title = "Seleccionar un archivo de texto",
             };
 
-            // Mostrar el cuadro de di�logo y verificar si el usuario seleccion� un archivo
+            // Mostrar el cuadro de diálogo y verificar si el usuario seleccionó un archivo
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 // Leer el contenido del archivo seleccionado
@@ -97,6 +105,61 @@ namespace Compilador
 
             RespuestaTablaSimbolo formGraficos = new RespuestaTablaSimbolo(resultado);
             formGraficos.Show();
+        }
+
+        /// <summary>
+        /// Acción de boton de analizador sintactico.
+        /// </summary>
+        /// <param name="sender">Sender.</param>
+        /// <param name="e">E.</param>
+        private void AnalizadorSintacticoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.lstErrores.Items.Clear();
+
+            string input = this.txtCompilador.Text;
+
+            // Dividir el código en líneas para obtener la línea exacta con error
+            string[] lineas = input.Split('\n');
+
+            // Crear el parser con la gramática
+            var grammar = new Gramatica();
+            var parser = new Parser(grammar);
+            var tree = parser.Parse(input);
+
+            // Verificar si el código es válido
+            if (tree.Root != null)
+            {
+                MessageBox.Show($"✅ Código válido.");
+                Console.WriteLine("Árbol sintáctico:\n" + tree.Root.ToString());
+            }
+            else
+            {
+                foreach (var err in tree.ParserMessages)
+                {
+                    string lineaError = (err.Location.Line > 0 && err.Location.Line <= lineas.Length)
+                        ? lineas[err.Location.Line - 1]  // Obtener la línea exacta del error
+                        : "No disponible";
+
+                    this.lstErrores.Items.Add($"Error: {err.Message} " +
+                        $"Línea {err.Location.Line}, Columna {err.Location.Column}. " +
+                        $"Estado: {err.ParserState.Name}. " +
+                        $"Código: {lineaError.Trim()}"); // Mostrar la línea de código con error
+                }
+
+                MessageBox.Show($"❌ Error en el código.");
+            }
+        }
+
+        private void lstErrores_DoubleClick(object sender, EventArgs e)
+        {
+            // Verifica que haya un ítem seleccionado
+            if (this.lstErrores.SelectedItem != null)
+            {
+                // Copia el texto del ítem seleccionado al portapapeles
+#pragma warning disable CS8604 // Posible argumento de referencia nulo
+                Clipboard.SetText(this.lstErrores.SelectedItem.ToString());
+#pragma warning restore CS8604 // Posible argumento de referencia nulo
+            }
         }
     }
 }

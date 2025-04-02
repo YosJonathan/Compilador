@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <PackageReference Include="FastColoredTextBox.Net6" Version="1.0.0" />
+    <PackageReference Include="Irony" Version="1.5.3" />
     <PackageReference Include="MaterialSkin.NET5" Version="1.0.2" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
       <PrivateAssets>all</PrivateAssets>

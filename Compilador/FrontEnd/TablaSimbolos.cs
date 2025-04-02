@@ -42,7 +42,6 @@ namespace Compilador.FrontEnd
                     // Reemplazar los comentarios con una cadena vacía
                     lineaTrim = Regex.Replace(lineaTrim, patronComentarios, string.Empty, RegexOptions.Singleline);
 
-
                     if (string.IsNullOrEmpty(lineaTrim))
                     {
                         // si esta vacia ignorar
