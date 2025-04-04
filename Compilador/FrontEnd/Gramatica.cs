@@ -47,9 +47,20 @@ public class Gramatica : Grammar
 
         // Regla para la directiva #include
         var includeDirectiva = new NonTerminal("includeDirectiva");
-        includeDirectiva.Rule = include + archivoInclude + puntoYComa;
+        includeDirectiva.Rule = include + archivoInclude;
 
-        // Reglas
+        // Regla para las expresiones
+        var expresion = new NonTerminal("expresion");
+        expresion.Rule = identificador + operadorAsignacion + identificador
+                        | identificador + operadorAsignacion + numeroEntero
+                        | identificador + operadorSuma + identificador;
+
+        // Regla para la función printf
+        var funcion = new NonTerminal("funcion");
+        funcion.Rule = operadorPrintf + parentesisAbrir + cadena + parentesisCerrar + puntoYComa
+                      | operadorScanf + parentesisAbrir + cadena + coma + ampersand + identificador + parentesisCerrar + puntoYComa;
+
+        // Regla para la declaración de variables
         var declaracionVariable = new NonTerminal("declaracionVariable");
         declaracionVariable.Rule = tipoInt + identificador + coma + identificador + coma + identificador + puntoYComa
                                   | tipoFloat + identificador + coma + identificador + coma + identificador + puntoYComa
@@ -58,24 +69,21 @@ public class Gramatica : Grammar
                                   | tipoFloat + identificador + puntoYComa
                                   | tipoChar + identificador + puntoYComa;
 
-        var expresion = new NonTerminal("expresion");
-        expresion.Rule = identificador + operadorAsignacion + identificador
-                        | identificador + operadorAsignacion + numeroEntero
-                        | identificador + operadorSuma + identificador;
+        // Regla para declaraciones dentro de un bloque
+        var declaracionesEnBloque = new NonTerminal("declaracionesEnBloque");
+        declaracionesEnBloque.Rule = MakePlusRule(declaracionesEnBloque, declaracionVariable | expresion | funcion);
 
-        var funcion = new NonTerminal("funcion");
-        funcion.Rule = operadorPrintf + parentesisAbrir + cadena + parentesisCerrar + puntoYComa
-                      | operadorScanf + parentesisAbrir + cadena + coma + ampersand + identificador + parentesisCerrar + puntoYComa;
-
+        // Regla para el bloque de código dentro de una función
         var bloque = new NonTerminal("bloque");
-        bloque.Rule = declaracionVariable + expresion + funcion;
+        bloque.Rule = "{" + declaracionesEnBloque + "}";
 
-        var funcionPrincipal = new NonTerminal("funcionPrincipal");
-        funcionPrincipal.Rule = tipoInt + "main" + parentesisAbrir + parentesisCerrar + bloque;
+        // Regla para la función main
+        var funcionMain = new NonTerminal("funcionMain");
+        funcionMain.Rule = tipoInt + "main" + parentesisAbrir + parentesisCerrar + bloque;
 
-        // Definir la raíz de la gramática
+        // La raíz de la gramática ahora incluye funciones y variables
         Root = new NonTerminal("Root");
-        Root.Rule = includeDirectiva + funcionPrincipal;
+        Root.Rule = MakePlusRule(Root, includeDirectiva | funcionMain | declaracionVariable | expresion);
 
         // Definir qué hacer con los espacios en blanco
         this.LanguageFlags = LanguageFlags.CreateAst;
