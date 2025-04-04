@@ -6,6 +6,7 @@ using Compilador;
 using Compilador.Herramientas;
 using Irony.Parsing;
 using System.Linq.Expressions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 /// <summary>
 /// Clase que contiene la gramatica.
@@ -17,47 +18,66 @@ public class Gramatica : Grammar
     /// </summary>
     public Gramatica()
     {
-        // Definir terminales para palabras clave
-        var select = new KeyTerm("SELECT", "SELECT");
-        var from = new KeyTerm("FROM", "FROM");
-        var where = new KeyTerm("WHERE", "WHERE");
-        var and = new KeyTerm("AND", "AND");
-        var or = new KeyTerm("OR", "OR");
-        var equals = new KeyTerm("=", "=");
-        var comma = new KeyTerm(",", ",");
-        var asterisk = new KeyTerm("*", "*");
-        var identifier = new IdentifierTerminal("identifier");
+        // Definición de los terminales
+        var include = new KeyTerm("#include", "#include");
+        var identificador = new IdentifierTerminal("identificador");
+        var tipoInt = new KeyTerm("int", "int");
+        var tipoFloat = new KeyTerm("float", "float");
+        var tipoChar = new KeyTerm("char", "char");
+        var tipoVoid = new KeyTerm("void", "void");
+        var operadorAsignacion = new KeyTerm("=", "=");
+        var operadorSuma = new KeyTerm("+", "+");
+        var operadorScanf = new KeyTerm("scanf", "scanf");
+        var operadorPrintf = new KeyTerm("printf", "printf");
+        var puntoYComa = new KeyTerm(";", "puntoYComa");
+        var parentesisAbrir = new KeyTerm("(", "(");
+        var parentesisCerrar = new KeyTerm(")", ")");
+        var coma = new KeyTerm(",", "coma");
+        var ampersand = new KeyTerm("&", "&");
 
-        // Definir literales para cadenas
-        var stringLiteral = new StringLiteral("string", "\"");
+        // Crear un Terminal que maneje la cadena entre < y > para #include
+        var archivoInclude = new RegexBasedTerminal("archivoInclude", "<[a-zA-Z0-9_\\.]+>");
 
-        // Definir terminal para números (enteros y flotantes)
-        var number = new NumberLiteral("number");
+        // Definir el número entero como un literal de número
+        var numeroEntero = new NumberLiteral("numeroEntero");
 
-        // Definir las expresiones
-        var expression = new NonTerminal("expression");
-        expression.Rule = identifier | number | stringLiteral;
+        // Definir las comillas dobles para cadenas de texto
+        var comillas = new KeyTerm("\"", "\"");
+        var cadena = new StringLiteral("cadena", "\"");
 
-        // Definir una lista de columnas en SELECT
-        var columns = new NonTerminal("columns");
-        columns.Rule = MakePlusRule(columns, comma, expression); // Una o más columnas separadas por coma
+        // Regla para la directiva #include
+        var includeDirectiva = new NonTerminal("includeDirectiva");
+        includeDirectiva.Rule = include + archivoInclude + puntoYComa;
 
-        // Definir una condición en WHERE
-        var condition = new NonTerminal("condition");
-        condition.Rule = expression + equals + expression |
-                         expression + and + condition |
-                         expression + or + condition;
+        // Reglas
+        var declaracionVariable = new NonTerminal("declaracionVariable");
+        declaracionVariable.Rule = tipoInt + identificador + coma + identificador + coma + identificador + puntoYComa
+                                  | tipoFloat + identificador + coma + identificador + coma + identificador + puntoYComa
+                                  | tipoChar + identificador + coma + identificador + coma + identificador + puntoYComa
+                                  | tipoInt + identificador + puntoYComa
+                                  | tipoFloat + identificador + puntoYComa
+                                  | tipoChar + identificador + puntoYComa;
 
-        // Definir la consulta SQL con punto y coma como alternativa opcional
-        var selectStatement = new NonTerminal("selectStatement");
-        selectStatement.Rule = select + columns + from + identifier +
-                               (where + condition) + ";" |
-                               select + columns + from + identifier + ";";  // Alternativa sin WHERE
+        var expresion = new NonTerminal("expresion");
+        expresion.Rule = identificador + operadorAsignacion + identificador
+                        | identificador + operadorAsignacion + numeroEntero
+                        | identificador + operadorSuma + identificador;
 
-        // La raíz de la gramática es la consulta SQL
-        this.Root = selectStatement;
+        var funcion = new NonTerminal("funcion");
+        funcion.Rule = operadorPrintf + parentesisAbrir + cadena + parentesisCerrar + puntoYComa
+                      | operadorScanf + parentesisAbrir + cadena + coma + ampersand + identificador + parentesisCerrar + puntoYComa;
 
-        // Marcar puntuaciones comunes, incluyendo el punto y coma
-        this.MarkPunctuation(",", ";", "(", ")");
+        var bloque = new NonTerminal("bloque");
+        bloque.Rule = declaracionVariable + expresion + funcion;
+
+        var funcionPrincipal = new NonTerminal("funcionPrincipal");
+        funcionPrincipal.Rule = tipoInt + "main" + parentesisAbrir + parentesisCerrar + bloque;
+
+        // Definir la raíz de la gramática
+        Root = new NonTerminal("Root");
+        Root.Rule = includeDirectiva + funcionPrincipal;
+
+        // Definir qué hacer con los espacios en blanco
+        this.LanguageFlags = LanguageFlags.CreateAst;
     }
 }
