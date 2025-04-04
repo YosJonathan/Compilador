@@ -16,102 +16,29 @@ public class Gramatica : Grammar
     /// </summary>
     public Gramatica()
     {
-        // Definir las expresiones terminales (tokens)
-        var number = new NumberLiteral("number");
-        var identifier = new IdentifierTerminal("identifier");
+        // Definir el terminal para los comentarios (líneas que empiezan con //)
+        var comentario = new CommentTerminal("comentario", "//", "\n");
 
-        var keywordPrint = ToTerm("print");
-        var keywordIf = ToTerm("if");
-        var keywordElse = ToTerm("else");
-        var keywordWhile = ToTerm("while");
-        var keywordFor = ToTerm("for");
+        // Definir los terminales para los tipos de datos con KeyTerm
+        var tipoDato = new KeyTerm("int", "int") | new KeyTerm("float", "float") |
+                       new KeyTerm("char", "char") | new KeyTerm("double", "double") |
+                       new KeyTerm("long", "long") | new KeyTerm("short", "short");
 
-        // Definir los operadores y delimitadores
-        var operatorAdd = ToTerm("+");
-        var operatorSub = ToTerm("-");
-        var operatorMul = ToTerm("*");
-        var operatorDiv = ToTerm("/");
+        // Definir el terminal para los identificadores (nombres de variables)
+        var identificador = new IdentifierTerminal("identificador");
 
-        var operatorGreaterThan = ToTerm(">");
-        var operatorLessThan = ToTerm("<");
-        var operatorEqual = ToTerm("==");
-        var operatorNotEqual = ToTerm("!=");
+        // Definir la regla para las declaraciones (tipo + identificador + ;)
+        var declaracion = new NonTerminal("declaracion");
+        declaracion.Rule = tipoDato + identificador + ";";
 
-        var operatorAssignAdd = ToTerm("+=");  // Operador de asignación compuesto
-        var operatorAssignSub = ToTerm("-=");  // Operador de asignación compuesto
-        var operatorAssignMul = ToTerm("*=");  // Operador de asignación compuesto
-        var operatorAssignDiv = ToTerm("/=");  // Operador de asignación compuesto
+        // Raíz: una lista de declaraciones o comentarios
+        var lista = new NonTerminal("lista");
+        lista.Rule = MakeStarRule(lista, comentario | declaracion);
 
-        var leftParenthesis = ToTerm("(");
-        var rightParenthesis = ToTerm(")");
-        var colon = ToTerm(":");
-        var comma = ToTerm(",");
+        // La raíz es ahora "lista", que puede contener múltiples declaraciones o comentarios
+        this.Root = lista;
 
-        // Definir los comentarios de una sola línea
-        var comment = new CommentTerminal("comment", "#", "\n");
-
-        // Definir las literales de cadenas (string)
-        var stringLiteral = new StringLiteral("string", "\"", StringOptions.AllowsAllEscapes);
-
-        // Definir las listas (arrays) en Python
-        var leftBracket = ToTerm("[");
-        var rightBracket = ToTerm("]");
-
-        // Reglas de la gramática
-        var expr = new NonTerminal("expr");
-        var stmt = new NonTerminal("stmt");
-        var stmtList = new NonTerminal("stmtList");
-        var assignment = new NonTerminal("assignment");
-        var printExprList = new NonTerminal("printExprList");
-        var condition = new NonTerminal("condition");
-        var whileStmt = new NonTerminal("whileStmt");
-        var forStmt = new NonTerminal("forStmt");
-        var listExpr = new NonTerminal("listExpr");
-        var listElements = new NonTerminal("listElements"); // Definir NonTerminal para los elementos de la lista
-
-        // Ignorar los comentarios y espacios
-        this.NonGrammarTerminals.Add(comment);  // Añadir comentarios como no-terminales
-
-        // Reglas de la gramática
-        expr.Rule = number | identifier | stringLiteral | expr + operatorAdd + expr | expr + operatorSub + expr | expr + operatorMul + expr | expr + operatorDiv + expr | listExpr;
-
-        // Expresión para listas (arrays)
-        listExpr.Rule = leftBracket + listElements + rightBracket;
-
-        // Elementos dentro de la lista
-        listElements.Rule = MakeStarRule(listElements, comma, expr);
-
-        // Regla para las expresiones dentro del print
-        printExprList.Rule = MakePlusRule(printExprList, comma, expr);
-
-        // Operadores de comparación para las condiciones
-        condition.Rule = expr + operatorGreaterThan + expr | expr + operatorLessThan + expr | expr + operatorEqual + expr | expr + operatorNotEqual + expr;
-
-        // Asignación de variables (tanto simple como compuesta)
-        assignment.Rule = identifier + "=" + expr |
-                          identifier + operatorAssignAdd + expr |
-                          identifier + operatorAssignSub + expr |
-                          identifier + operatorAssignMul + expr |
-                          identifier + operatorAssignDiv + expr;
-
-        // Bucle while
-        whileStmt.Rule = keywordWhile + condition + colon + stmtList;
-
-        // Bucle for
-        forStmt.Rule = keywordFor + identifier + "in" + expr + colon + stmtList;
-
-        // Reglas para la sentencia
-        stmt.Rule = keywordPrint + leftParenthesis + printExprList + rightParenthesis |
-                    keywordIf + condition + colon + stmtList + keywordElse + colon + stmtList |
-                    whileStmt |
-                    forStmt |
-                    assignment |
-                    comment;
-
-        // Lista de sentencias
-        stmtList.Rule = MakePlusRule(stmtList, stmt); // Reglas recursivas para listas de sentencias
-
-        // Establecer la regla de inicio de la gramática
-        Root = stmtList;
+        // Marcar puntuaciones comunes en C como paréntesis, llaves y punto y coma
+        this.MarkPunctuation("(", ")", "{", "}", ";");
     }
 }
