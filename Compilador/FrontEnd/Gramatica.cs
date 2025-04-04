@@ -5,6 +5,7 @@
 using Compilador;
 using Compilador.Herramientas;
 using Irony.Parsing;
+using System.Linq.Expressions;
 
 /// <summary>
 /// Clase que contiene la gramatica.
@@ -16,29 +17,47 @@ public class Gramatica : Grammar
     /// </summary>
     public Gramatica()
     {
-        // Definir el terminal para los comentarios (líneas que empiezan con //)
-        var comentario = new CommentTerminal("comentario", "//", "\n");
+        // Definir terminales para palabras clave
+        var select = new KeyTerm("SELECT", "SELECT");
+        var from = new KeyTerm("FROM", "FROM");
+        var where = new KeyTerm("WHERE", "WHERE");
+        var and = new KeyTerm("AND", "AND");
+        var or = new KeyTerm("OR", "OR");
+        var equals = new KeyTerm("=", "=");
+        var comma = new KeyTerm(",", ",");
+        var asterisk = new KeyTerm("*", "*");
+        var identifier = new IdentifierTerminal("identifier");
 
-        // Definir los terminales para los tipos de datos con KeyTerm
-        var tipoDato = new KeyTerm("int", "int") | new KeyTerm("float", "float") |
-                       new KeyTerm("char", "char") | new KeyTerm("double", "double") |
-                       new KeyTerm("long", "long") | new KeyTerm("short", "short");
+        // Definir literales para cadenas
+        var stringLiteral = new StringLiteral("string", "\"");
 
-        // Definir el terminal para los identificadores (nombres de variables)
-        var identificador = new IdentifierTerminal("identificador");
+        // Definir terminal para números (enteros y flotantes)
+        var number = new NumberLiteral("number");
 
-        // Definir la regla para las declaraciones (tipo + identificador + ;)
-        var declaracion = new NonTerminal("declaracion");
-        declaracion.Rule = tipoDato + identificador + ";";
+        // Definir las expresiones
+        var expression = new NonTerminal("expression");
+        expression.Rule = identifier | number | stringLiteral;
 
-        // Raíz: una lista de declaraciones o comentarios
-        var lista = new NonTerminal("lista");
-        lista.Rule = MakeStarRule(lista, comentario | declaracion);
+        // Definir una lista de columnas en SELECT
+        var columns = new NonTerminal("columns");
+        columns.Rule = MakePlusRule(columns, comma, expression); // Una o más columnas separadas por coma
 
-        // La raíz es ahora "lista", que puede contener múltiples declaraciones o comentarios
-        this.Root = lista;
+        // Definir una condición en WHERE
+        var condition = new NonTerminal("condition");
+        condition.Rule = expression + equals + expression |
+                         expression + and + condition |
+                         expression + or + condition;
 
-        // Marcar puntuaciones comunes en C como paréntesis, llaves y punto y coma
-        this.MarkPunctuation("(", ")", "{", "}", ";");
+        // Definir la consulta SQL con punto y coma como alternativa opcional
+        var selectStatement = new NonTerminal("selectStatement");
+        selectStatement.Rule = select + columns + from + identifier +
+                               (where + condition) + ";" |
+                               select + columns + from + identifier + ";";  // Alternativa sin WHERE
+
+        // La raíz de la gramática es la consulta SQL
+        this.Root = selectStatement;
+
+        // Marcar puntuaciones comunes, incluyendo el punto y coma
+        this.MarkPunctuation(",", ";", "(", ")");
     }
 }
