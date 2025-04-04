@@ -77,13 +77,13 @@ public class Gramatica : Grammar
         var bloque = new NonTerminal("bloque");
         bloque.Rule = "{" + declaracionesEnBloque + "}";
 
-        // Regla para la función main
+        // Regla para la función main (especificando que 'main' es un terminal explícito)
         var funcionMain = new NonTerminal("funcionMain");
         funcionMain.Rule = tipoInt + "main" + parentesisAbrir + parentesisCerrar + bloque;
 
-        // La raíz de la gramática ahora incluye funciones y variables
+        // La raíz de la gramática ahora incluye #include y la función main
         Root = new NonTerminal("Root");
-        Root.Rule = MakePlusRule(Root, includeDirectiva | funcionMain | declaracionVariable | expresion);
+        Root.Rule = MakePlusRule(Root, includeDirectiva | funcionMain );
 
         // Definir qué hacer con los espacios en blanco
         this.LanguageFlags = LanguageFlags.CreateAst;
