@@ -33,6 +33,7 @@ namespace Compilador.FrontEnd
         private static readonly Regex RegexSimbolo = new Regex(@"^[{}()\[\],;.]$");
         private static readonly Regex RegexCadenaTexto = new Regex("\"([^\"]*)\""); // Para cadenas de texto entre comillas dobles
         private static readonly Regex RegexDirectivaPreprocesador = new Regex(@"^#\w+$");
+        private static readonly Regex RegexContenidoEntreMenores = new Regex(@"[\w.-]+\.h");
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AnalizadorLexico"/> class.
@@ -92,9 +93,13 @@ namespace Compilador.FrontEnd
                     {
                         resultado.DirectivasPreprocesador.Add(token);
                     }
+                    else if (RegexContenidoEntreMenores.IsMatch(token))
+                    {
+                        resultado.Librerias.Add(token);
+                    }
                     else
                     {
-                      this.manejadorErrores.AgregarError(numLinea + 1, i + 1, $"Token inválido: '{token}'");
+                        this.manejadorErrores.AgregarError(numLinea + 1, i + 1, $"Token inválido: '{token}'");
                     }
                 }
             }

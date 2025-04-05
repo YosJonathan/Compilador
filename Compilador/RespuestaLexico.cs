@@ -1,30 +1,31 @@
-﻿using MaterialSkin.Controls;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Compilador.Modelos;
+﻿// <copyright file="RespuestaLexico.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace Compilador
 {
+    using System.Data;
+    using global::Compilador.Modelos;
+    using MaterialSkin.Controls;
+
+    /// <summary>
+    /// Respuesta lexico form.
+    /// </summary>
     public partial class RespuestaLexico : MaterialForm
     {
-        RespuestaAnalisisLexico respuesta;
+        private RespuestaAnalisisLexico respuesta;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RespuestaLexico"/> class.
+        /// </summary>
+        /// <param name="respuestaD">respuesta de analisis.</param>
         public RespuestaLexico(RespuestaAnalisisLexico respuestaD)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.respuesta = respuestaD;
             MaterialUI.cargarMaterial(this);
-            LlenarDataGridView();
+            this.LlenarDataGridView();
         }
-
-
 
         private void LlenarDataGridView()
         {
@@ -36,35 +37,36 @@ namespace Compilador
             dt.Columns.Add("Símbolos");
             dt.Columns.Add("Cadenas de Texto");
             dt.Columns.Add("Directivas Preprocesador");
+            dt.Columns.Add("Libreria");
 
             // Obtener la cantidad máxima de elementos en todas las listas
-            int maxFilas = new List<int> {
-                respuesta.PalabrasReservadas.Count, respuesta.Identificadores.Count, respuesta.Numeros.Count,
-                respuesta.Operadores.Count, respuesta.Simbolos.Count, respuesta.CadenasTexto.Count,
-                respuesta.DirectivasPreprocesador.Count,
+            int maxFilas = new List<int>
+            {
+                this.respuesta.PalabrasReservadas.Count, this.respuesta.Identificadores.Count, this.respuesta.Numeros.Count,
+                this.respuesta.Operadores.Count, this.respuesta.Simbolos.Count, this.respuesta.CadenasTexto.Count,
+                this.respuesta.DirectivasPreprocesador.Count, this.respuesta.Librerias.Count,
             }.Max();
 
             // Llenar las filas con los datos, dejando vacío cuando no haya más elementos en una lista
             for (int i = 0; i < maxFilas; i++)
             {
                 dt.Rows.Add(
-                    i < respuesta.PalabrasReservadas.Count ? respuesta.PalabrasReservadas[i] : "",
-                    i < respuesta.Identificadores.Count ? respuesta.Identificadores[i] : "",
-                    i < respuesta.Numeros.Count ? respuesta.Numeros[i] : "",
-                    i < respuesta.Operadores.Count ? respuesta.Operadores[i] : "",
-                    i < respuesta.Simbolos.Count ? respuesta.Simbolos[i] : "",
-                    i < respuesta.CadenasTexto.Count ? respuesta.CadenasTexto[i] : "",
-                    i < respuesta.DirectivasPreprocesador.Count ? respuesta.DirectivasPreprocesador[i] : ""
-                );
+                    i < this.respuesta.PalabrasReservadas.Count ? this.respuesta.PalabrasReservadas[i] : string.Empty,
+                    i < this.respuesta.Identificadores.Count ? this.respuesta.Identificadores[i] : string.Empty,
+                    i < this.respuesta.Numeros.Count ? this.respuesta.Numeros[i] : string.Empty,
+                    i < this.respuesta.Operadores.Count ? this.respuesta.Operadores[i] : string.Empty,
+                    i < this.respuesta.Simbolos.Count ? this.respuesta.Simbolos[i] : string.Empty,
+                    i < this.respuesta.CadenasTexto.Count ? this.respuesta.CadenasTexto[i] : string.Empty,
+                    i < this.respuesta.DirectivasPreprocesador.Count ? this.respuesta.DirectivasPreprocesador[i] : string.Empty,
+                    i < this.respuesta.Librerias.Count ? this.respuesta.Librerias[i] : string.Empty);
             }
 
-            dataGridView1.DataSource = dt;
-            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill; // Ajustar columnas al tamaño
+            this.dataGridView1.DataSource = dt;
+            this.dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill; // Ajustar columnas al tamaño
         }
 
         private void RespuestaLexico_Load(object sender, EventArgs e)
         {
-
         }
     }
 }

@@ -37,7 +37,6 @@
             abrirArchivotxtToolStripMenuItem = new ToolStripMenuItem();
             analizadorToolStripMenuItem = new ToolStripMenuItem();
             analizadorLexicoToolStripMenuItem = new ToolStripMenuItem();
-            tablaDeSimbolosToolStripMenuItem = new ToolStripMenuItem();
             analizadorSintacticoToolStripMenuItem = new ToolStripMenuItem();
             lstErrores = new ListBox();
             ((System.ComponentModel.ISupportInitialize)txtCompilador).BeginInit();
@@ -66,6 +65,7 @@
             txtCompilador.CharWidth = 10;
             txtCompilador.DefaultMarkerSize = 8;
             txtCompilador.DisabledColor = Color.FromArgb(100, 180, 180, 180);
+            txtCompilador.Font = new Font("Courier New", 9.75F);
             txtCompilador.IsReplaceMode = false;
             txtCompilador.Location = new Point(0, 66);
             txtCompilador.Name = "txtCompilador";
@@ -104,7 +104,7 @@
             // 
             archivoToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { abrirArchivotxtToolStripMenuItem });
             archivoToolStripMenuItem.Name = "archivoToolStripMenuItem";
-            archivoToolStripMenuItem.Size = new Size(174, 26);
+            archivoToolStripMenuItem.Size = new Size(224, 26);
             archivoToolStripMenuItem.Text = "Archivo";
             // 
             // abrirArchivotxtToolStripMenuItem
@@ -116,9 +116,9 @@
             // 
             // analizadorToolStripMenuItem
             // 
-            analizadorToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { analizadorLexicoToolStripMenuItem, tablaDeSimbolosToolStripMenuItem, analizadorSintacticoToolStripMenuItem });
+            analizadorToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { analizadorLexicoToolStripMenuItem, analizadorSintacticoToolStripMenuItem });
             analizadorToolStripMenuItem.Name = "analizadorToolStripMenuItem";
-            analizadorToolStripMenuItem.Size = new Size(174, 26);
+            analizadorToolStripMenuItem.Size = new Size(224, 26);
             analizadorToolStripMenuItem.Text = "Analizador";
             // 
             // analizadorLexicoToolStripMenuItem
@@ -127,13 +127,6 @@
             analizadorLexicoToolStripMenuItem.Size = new Size(254, 26);
             analizadorLexicoToolStripMenuItem.Text = "Analizador Lexico";
             analizadorLexicoToolStripMenuItem.Click += AnalizadorLexicoToolStripMenuItem_Click;
-            // 
-            // tablaDeSimbolosToolStripMenuItem
-            // 
-            tablaDeSimbolosToolStripMenuItem.Name = "tablaDeSimbolosToolStripMenuItem";
-            tablaDeSimbolosToolStripMenuItem.Size = new Size(254, 26);
-            tablaDeSimbolosToolStripMenuItem.Text = "Tabla de Simbolos";
-            tablaDeSimbolosToolStripMenuItem.Click += TablaDeSimbolosToolStripMenuItem_Click;
             // 
             // analizadorSintacticoToolStripMenuItem
             // 
@@ -149,7 +142,7 @@
             lstErrores.Name = "lstErrores";
             lstErrores.Size = new Size(805, 124);
             lstErrores.TabIndex = 2;
-            lstErrores.DoubleClick += lstErrores_DoubleClick;
+            lstErrores.DoubleClick += LstErrores_DoubleClick;
             // 
             // Compilador
             // 
@@ -179,7 +172,6 @@
         private ToolStripMenuItem abrirArchivotxtToolStripMenuItem;
         private ToolStripMenuItem analizadorToolStripMenuItem;
         private ToolStripMenuItem analizadorLexicoToolStripMenuItem;
-        private ToolStripMenuItem tablaDeSimbolosToolStripMenuItem;
         private ToolStripMenuItem analizadorSintacticoToolStripMenuItem;
         private ListBox lstErrores;
     }

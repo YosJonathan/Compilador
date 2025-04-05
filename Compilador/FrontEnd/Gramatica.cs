@@ -2,11 +2,7 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-using Compilador;
-using Compilador.Herramientas;
 using Irony.Parsing;
-using System.Linq.Expressions;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 /// <summary>
 /// Clase que contiene la gramatica.
@@ -19,23 +15,23 @@ public class Gramatica : Grammar
     public Gramatica()
     {
         // Terminales
-        var include = ToTerm("#include");
-        var tipoInt = ToTerm("int");
-        var tipoFloat = ToTerm("float");
-        var tipoChar = ToTerm("char");
-        var tipoVoid = ToTerm("void");
-        var operadorAsignacion = ToTerm("=");
-        var operadorSuma = ToTerm("+");
-        var operadorScanf = ToTerm("scanf");
-        var operadorPrintf = ToTerm("printf");
-        var puntoYComa = ToTerm(";");
-        var parentesisAbrir = ToTerm("(");
-        var parentesisCerrar = ToTerm(")");
-        var coma = ToTerm(",");
-        var ampersand = ToTerm("&");
-        var llaveAbrir = ToTerm("{");
-        var llaveCerrar = ToTerm("}");
-        var operadorReturn = ToTerm("return");
+        var include = this.ToTerm("#include");
+        var tipoInt = this.ToTerm("int");
+        var tipoFloat = this.ToTerm("float");
+        var tipoChar = this.ToTerm("char");
+        var tipoVoid = this.ToTerm("void");
+        var operadorAsignacion = this.ToTerm("=");
+        var operadorSuma = this.ToTerm("+");
+        var operadorScanf = this.ToTerm("scanf");
+        var operadorPrintf = this.ToTerm("printf");
+        var puntoYComa = this.ToTerm(";");
+        var parentesisAbrir = this.ToTerm("(");
+        var parentesisCerrar = this.ToTerm(")");
+        var coma = this.ToTerm(",");
+        var ampersand = this.ToTerm("&");
+        var llaveAbrir = this.ToTerm("{");
+        var llaveCerrar = this.ToTerm("}");
+        var operadorReturn = this.ToTerm("return");
 
         var identificador = new IdentifierTerminal("identificador");
         var archivoInclude = new RegexBasedTerminal("archivoInclude", "<[a-zA-Z0-9_\\.]+>");
@@ -60,8 +56,7 @@ public class Gramatica : Grammar
 
         var instruccionReturn = new NonTerminal("instruccionReturn");
 
-        listaExpresionesPrintf.Rule = MakePlusRule(listaExpresionesPrintf, coma, expresionBinaria);
-
+        listaExpresionesPrintf.Rule = this.MakePlusRule(listaExpresionesPrintf, coma, expresionBinaria);
 
         expresionBinaria.Rule = identificador
                       | numeroEntero
@@ -69,21 +64,18 @@ public class Gramatica : Grammar
                       | identificador + operadorAsignacion + identificador
                       | identificador + operadorAsignacion + numeroEntero;
 
-
         parametroScanf.Rule = ampersand + identificador;
-        listaParametrosScanf.Rule = MakePlusRule(listaParametrosScanf, coma, parametroScanf);
-
+        listaParametrosScanf.Rule = this.MakePlusRule(listaParametrosScanf, coma, parametroScanf);
 
         // Reglas
-        listaParametrosPrintf.Rule = MakePlusRule(listaParametrosPrintf, coma, identificador);
+        listaParametrosPrintf.Rule = this.MakePlusRule(listaParametrosPrintf, coma, identificador);
 
-        listaIncludes.Rule = MakeStarRule(listaIncludes, includeDirectiva);
+        listaIncludes.Rule = this.MakeStarRule(listaIncludes, includeDirectiva);
         programa.Rule = listaIncludes + funcionMain;
 
-        funcionMain.Rule = tipoInt + ToTerm("main") + parentesisAbrir + parentesisCerrar + bloque | includeDirectiva;
+        funcionMain.Rule = tipoInt + this.ToTerm("main") + parentesisAbrir + parentesisCerrar + bloque | includeDirectiva;
 
         bloque.Rule = llaveAbrir + declaracionesEnBloque + llaveCerrar;
-
 
         includeDirectiva.Rule = include + archivoInclude;
 
@@ -97,8 +89,7 @@ public class Gramatica : Grammar
               | operadorPrintf + parentesisAbrir + cadena + coma + listaExpresionesPrintf + parentesisCerrar + puntoYComa
               | operadorScanf + parentesisAbrir + cadena + coma + listaParametrosScanf + parentesisCerrar + puntoYComa;
 
-
-        declaracionesEnBloque.Rule = MakeStarRule(declaracionesEnBloque,funcion | declaracionVariable | expresion | instruccionReturn);
+        declaracionesEnBloque.Rule = this.MakeStarRule(declaracionesEnBloque, funcion | declaracionVariable | expresion | instruccionReturn);
 
         // Instrucción return
         instruccionReturn.Rule = operadorReturn + numeroEntero + puntoYComa;  // Acepta `return 0;`
@@ -107,10 +98,9 @@ public class Gramatica : Grammar
         this.Root = programa;
 
         // Marcar símbolos de puntuación para que no aparezcan en el árbol
-        MarkPunctuation(";", "(", ")", ",", "&", "{", "}", "#include");
+        this.MarkPunctuation(";", "(", ")", ",", "&", "{", "}", "#include");
 
         // Marcar palabras reservadas
-        MarkReservedWords("int", "float", "char", "void", "printf", "scanf");
+        this.MarkReservedWords("int", "float", "char", "void", "printf", "scanf");
     }
-
 }

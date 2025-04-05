@@ -78,8 +78,10 @@ namespace Compilador
                 List<string> errores = analizadorLexico.ObtenerErrores();
                 foreach (string error in errores)
                 {
-                    MessageBox.Show(error);
+                    this.lstErrores.Items.Add(error);
                 }
+
+                MessageBox.Show($"❌ Error en el código.");
             }
         }
 
@@ -129,7 +131,7 @@ namespace Compilador
             // Verificar si el código es válido
             if (tree.Root != null)
             {
-                MessageBox.Show($"✅ Código válido.");
+                this.txtCompilador.Text = tree.Root.ToString();
                 Console.WriteLine("Árbol sintáctico:\n" + tree.Root.ToString());
             }
             else
@@ -137,7 +139,7 @@ namespace Compilador
                 foreach (var err in tree.ParserMessages)
                 {
                     string lineaError = (err.Location.Line > 0 && err.Location.Line <= lineas.Length)
-                        ? lineas[err.Location.Line - 1]  // Obtener la línea exacta del error
+                        ? lineas[err.Location.Line - 1] // Obtener la línea exacta del error
                         : "No disponible";
 
                     this.lstErrores.Items.Add($"Error: {err.Message} " +
@@ -150,7 +152,13 @@ namespace Compilador
             }
         }
 
-        private void lstErrores_DoubleClick(object sender, EventArgs e)
+        /// <summary>
+        /// Evento que se ejecuta cuando el usuario hace doble clic en un ítem de la lista de errores.
+        /// Si hay un ítem seleccionado, copia su texto al portapapeles.
+        /// </summary>
+        /// <param name="sender">El origen del evento.</param>
+        /// <param name="e">Los argumentos del evento.</param>
+        private void LstErrores_DoubleClick(object sender, EventArgs e)
         {
             // Verifica que haya un ítem seleccionado
             if (this.lstErrores.SelectedItem != null)
