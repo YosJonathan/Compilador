@@ -35,6 +35,7 @@ public class Gramatica : Grammar
         var ampersand = ToTerm("&");
         var llaveAbrir = ToTerm("{");
         var llaveCerrar = ToTerm("}");
+        var operadorReturn = ToTerm("return");
 
         var identificador = new IdentifierTerminal("identificador");
         var archivoInclude = new RegexBasedTerminal("archivoInclude", "<[a-zA-Z0-9_\\.]+>");
@@ -56,8 +57,9 @@ public class Gramatica : Grammar
         var listaParametrosScanf = new NonTerminal("listaParametrosScanf");
         var expresionBinaria = new NonTerminal("expresionBinaria");
         var listaExpresionesPrintf = new NonTerminal("listaExpresionesPrintf");
-        
-        
+
+        var instruccionReturn = new NonTerminal("instruccionReturn");
+
         listaExpresionesPrintf.Rule = MakePlusRule(listaExpresionesPrintf, coma, expresionBinaria);
 
 
@@ -96,7 +98,10 @@ public class Gramatica : Grammar
               | operadorScanf + parentesisAbrir + cadena + coma + listaParametrosScanf + parentesisCerrar + puntoYComa;
 
 
-        declaracionesEnBloque.Rule = MakeStarRule(declaracionesEnBloque,funcion | declaracionVariable | expresion);
+        declaracionesEnBloque.Rule = MakeStarRule(declaracionesEnBloque,funcion | declaracionVariable | expresion | instruccionReturn);
+
+        // Instrucción return
+        instruccionReturn.Rule = operadorReturn + numeroEntero + puntoYComa;  // Acepta `return 0;`
 
         // Establecer el punto de entrada
         this.Root = programa;
