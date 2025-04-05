@@ -54,6 +54,19 @@ public class Gramatica : Grammar
         var listaParametrosPrintf = new NonTerminal("listaParametrosPrintf");
         var parametroScanf = new NonTerminal("parametroScanf");
         var listaParametrosScanf = new NonTerminal("listaParametrosScanf");
+        var expresionBinaria = new NonTerminal("expresionBinaria");
+        var listaExpresionesPrintf = new NonTerminal("listaExpresionesPrintf");
+        
+        
+        listaExpresionesPrintf.Rule = MakePlusRule(listaExpresionesPrintf, coma, expresionBinaria);
+
+
+        expresionBinaria.Rule = identificador
+                      | numeroEntero
+                      | identificador + operadorSuma + identificador
+                      | identificador + operadorAsignacion + identificador
+                      | identificador + operadorAsignacion + numeroEntero;
+
 
         parametroScanf.Rule = ampersand + identificador;
         listaParametrosScanf.Rule = MakePlusRule(listaParametrosScanf, coma, parametroScanf);
@@ -79,8 +92,8 @@ public class Gramatica : Grammar
                        | identificador + operadorSuma + identificador + puntoYComa;
 
         funcion.Rule = operadorPrintf + parentesisAbrir + cadena + parentesisCerrar + puntoYComa
-             | operadorPrintf + parentesisAbrir + cadena + coma + listaParametrosPrintf + parentesisCerrar + puntoYComa
-             | operadorScanf + parentesisAbrir + cadena + coma + ampersand + listaParametrosScanf + parentesisCerrar + puntoYComa;
+              | operadorPrintf + parentesisAbrir + cadena + coma + listaExpresionesPrintf + parentesisCerrar + puntoYComa
+              | operadorScanf + parentesisAbrir + cadena + coma + listaParametrosScanf + parentesisCerrar + puntoYComa;
 
 
         declaracionesEnBloque.Rule = MakeStarRule(declaracionesEnBloque,funcion | declaracionVariable | expresion);
