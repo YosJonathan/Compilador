@@ -131,8 +131,6 @@ namespace Compilador
             // Verificar si el código es válido
             if (tree.Root != null)
             {
-                this.txtCompilador.Text = tree.Root.ToString();
-                Console.WriteLine("Árbol sintáctico:\n" + tree.Root.ToString());
                 RespuestaSintactico formGraficos = new RespuestaSintactico(tree.Root);
                 formGraficos.Show();
             }

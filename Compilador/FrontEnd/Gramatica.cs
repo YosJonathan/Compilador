@@ -56,6 +56,10 @@ public class Gramatica : Grammar
 
         var instruccionReturn = new NonTerminal("instruccionReturn");
 
+        var tipoVariable = new NonTerminal("tipoVariable");
+
+        var instruccionCodigo = new NonTerminal("instruccionCodigo");
+
         listaExpresionesPrintf.Rule = this.MakePlusRule(listaExpresionesPrintf, coma, expresionBinaria);
 
         expresionBinaria.Rule = identificador
@@ -79,7 +83,9 @@ public class Gramatica : Grammar
 
         includeDirectiva.Rule = include + archivoInclude;
 
-        declaracionVariable.Rule = (tipoInt | tipoFloat | tipoChar) + identificador + puntoYComa;
+        tipoVariable.Rule = tipoInt | tipoFloat | tipoChar;
+
+        declaracionVariable.Rule = tipoVariable + identificador + puntoYComa;
 
         expresion.Rule = identificador + operadorAsignacion + numeroEntero + puntoYComa
                        | identificador + operadorAsignacion + identificador + puntoYComa
@@ -89,7 +95,9 @@ public class Gramatica : Grammar
               | operadorPrintf + parentesisAbrir + cadena + coma + listaExpresionesPrintf + parentesisCerrar + puntoYComa
               | operadorScanf + parentesisAbrir + cadena + coma + listaParametrosScanf + parentesisCerrar + puntoYComa;
 
-        declaracionesEnBloque.Rule = this.MakeStarRule(declaracionesEnBloque, funcion | declaracionVariable | expresion | instruccionReturn);
+        instruccionCodigo.Rule = funcion | declaracionVariable | expresion | instruccionReturn;
+
+        declaracionesEnBloque.Rule = this.MakeStarRule(declaracionesEnBloque, instruccionCodigo);
 
         // Instrucción return
         instruccionReturn.Rule = operadorReturn + numeroEntero + puntoYComa;  // Acepta `return 0;`
