@@ -12,7 +12,6 @@ namespace Compilador
     /// </summary>
     public partial class RespuestaTablaSimbolo : MaterialForm
     {
-
         /// <summary>
         /// Initializes a new instance of the <see cref="RespuestaTablaSimbolo"/> class.
         /// </summary>
@@ -20,7 +19,7 @@ namespace Compilador
         public RespuestaTablaSimbolo(Dictionary<string, Simbolo> respuesta)
         {
             this.InitializeComponent();
-            MaterialUI.cargarMaterial(this);
+            MaterialUI.CargarMaterial(this);
             this.respuesta = respuesta;
             this.LlenarDataGridView();
         }

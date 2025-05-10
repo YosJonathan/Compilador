@@ -10,3 +10,4 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1201:Elements should appear in the correct order", Justification = "<pendiente>", Scope = "member", Target = "~F:Compilador.RespuestaTablaSimbolo.respuesta")]
 [assembly: SuppressMessage("Style", "IDE0090:Usar \"new(...)\"", Justification = "<pendiente>", Scope = "member", Target = "~F:Compilador.FrontEnd.TablaSimbolos.manejadorErrores")]
 [assembly: SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1204:Static elements should appear before instance elements", Justification = "<pendiente>", Scope = "member", Target = "~F:Compilador.FrontEnd.AnalizadorLexico.RegexIdentificador")]
+[assembly: SuppressMessage("CodeQuality", "IDE0079:Quitar supresión innecesaria", Justification = "<pendiente>", Scope = "type", Target = "~T:Compilador.FrontEnd.TablaSimbolos")]

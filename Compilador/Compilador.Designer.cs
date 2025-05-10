@@ -36,8 +36,7 @@
             archivoToolStripMenuItem = new ToolStripMenuItem();
             abrirArchivotxtToolStripMenuItem = new ToolStripMenuItem();
             analizadorToolStripMenuItem = new ToolStripMenuItem();
-            analizadorLexicoToolStripMenuItem = new ToolStripMenuItem();
-            analizadorSintacticoToolStripMenuItem = new ToolStripMenuItem();
+            realizarAnalisisToolStripMenuItem = new ToolStripMenuItem();
             lstErrores = new ListBox();
             ((System.ComponentModel.ISupportInitialize)txtCompilador).BeginInit();
             materialMenuStrip1.SuspendLayout();
@@ -116,24 +115,17 @@
             // 
             // analizadorToolStripMenuItem
             // 
-            analizadorToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { analizadorLexicoToolStripMenuItem, analizadorSintacticoToolStripMenuItem });
+            analizadorToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { realizarAnalisisToolStripMenuItem });
             analizadorToolStripMenuItem.Name = "analizadorToolStripMenuItem";
             analizadorToolStripMenuItem.Size = new Size(224, 26);
             analizadorToolStripMenuItem.Text = "Analizador";
             // 
-            // analizadorLexicoToolStripMenuItem
+            // realizarAnalisisToolStripMenuItem
             // 
-            analizadorLexicoToolStripMenuItem.Name = "analizadorLexicoToolStripMenuItem";
-            analizadorLexicoToolStripMenuItem.Size = new Size(254, 26);
-            analizadorLexicoToolStripMenuItem.Text = "Analizador Lexico";
-            analizadorLexicoToolStripMenuItem.Click += AnalizadorLexicoToolStripMenuItem_Click;
-            // 
-            // analizadorSintacticoToolStripMenuItem
-            // 
-            analizadorSintacticoToolStripMenuItem.Name = "analizadorSintacticoToolStripMenuItem";
-            analizadorSintacticoToolStripMenuItem.Size = new Size(254, 26);
-            analizadorSintacticoToolStripMenuItem.Text = "Analizador Sintactico";
-            analizadorSintacticoToolStripMenuItem.Click += AnalizadorSintacticoToolStripMenuItem_Click;
+            realizarAnalisisToolStripMenuItem.Name = "realizarAnalisisToolStripMenuItem";
+            realizarAnalisisToolStripMenuItem.Size = new Size(224, 26);
+            realizarAnalisisToolStripMenuItem.Text = "Realizar Analisis";
+            realizarAnalisisToolStripMenuItem.Click += RealizarAnalisisToolStripMenuItem_Click;
             // 
             // lstErrores
             // 
@@ -171,8 +163,7 @@
         private ToolStripMenuItem archivoToolStripMenuItem;
         private ToolStripMenuItem abrirArchivotxtToolStripMenuItem;
         private ToolStripMenuItem analizadorToolStripMenuItem;
-        private ToolStripMenuItem analizadorLexicoToolStripMenuItem;
-        private ToolStripMenuItem analizadorSintacticoToolStripMenuItem;
         private ListBox lstErrores;
+        private ToolStripMenuItem realizarAnalisisToolStripMenuItem;
     }
 }

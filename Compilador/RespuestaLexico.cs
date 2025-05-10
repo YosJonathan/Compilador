@@ -23,7 +23,7 @@ namespace Compilador
         {
             this.InitializeComponent();
             this.respuesta = respuestaD;
-            MaterialUI.cargarMaterial(this);
+            MaterialUI.CargarMaterial(this);
             this.LlenarDataGridView();
         }
 

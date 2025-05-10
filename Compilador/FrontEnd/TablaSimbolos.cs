@@ -6,157 +6,53 @@ namespace Compilador.FrontEnd
 {
     using System;
     using System.Collections.Generic;
-    using System.Text.RegularExpressions;
-    using Modelos;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
 
     /// <summary>
-    /// Generando tabla de simbolos.
+    /// Tabla de simbolos.
     /// </summary>
     public class TablaSimbolos
     {
-        private Dictionary<string, Simbolo> tablaSimbolos = new Dictionary<string, Simbolo>();
-        private ManejadorErrores manejadorErrores = new ManejadorErrores();
+#pragma warning disable SA1401 // Fields should be private
+#pragma warning disable SA1600 // Elements should be documented
+        public Dictionary<string, Simbolo> Simbolos = new ();
+#pragma warning disable IDE0079 // Quitar supresión innecesaria
+#pragma warning restore SA1600 // Elements should be documented
+#pragma warning restore SA1401 // Fields should be private
 
         /// <summary>
-        /// Analizar codigo asincrono.
+        /// Agregar.
         /// </summary>
-        /// <param name="codigo">Codigo a analizar.</param>
-        /// <returns>Respuesta del codigo.</returns>
-        public async Task AnalizarCodigoAsync(string codigo)
+        /// <param name="name">nombre.</param>
+        /// <param name="symbol">simbolo.</param>
+        /// <exception cref="Exception">Excepción.</exception>
+        public void Agregar(string name, Simbolo symbol)
+#pragma warning restore IDE0079 // Quitar supresión innecesaria
         {
-            await Task.Run(() =>
+            if (this.Simbolos.ContainsKey(name))
             {
-                this.tablaSimbolos.Clear();
-                this.manejadorErrores = new ManejadorErrores(); // Reiniciar errores
-                string[] lineas = codigo.Split('\n');
-                string ambitoActual = "global";
-                Stack<bool> bloquesAbiertos = new Stack<bool>(); // Para manejar el estado de apertura y cierre de bloques
+                throw new Exception($"Error: la variable '{name}' ya fue declarada.");
+            }
 
-                for (int i = 0; i < lineas.Length; i++)
-                {
-                    string lineaTrim = lineas[i].Trim();
-
-                    // Expresión regular para detectar comentarios de una sola línea (//) y de múltiples líneas (/* */)
-                    string patronComentarios = @"(//.*?$)|(/\*.*?\*/)";
-
-                    // Reemplazar los comentarios con una cadena vacía
-                    lineaTrim = Regex.Replace(lineaTrim, patronComentarios, string.Empty, RegexOptions.Singleline);
-
-                    if (string.IsNullOrEmpty(lineaTrim))
-                    {
-                        // si esta vacia ignorar
-                        continue;
-                    }
-
-                    // Dentro del loop que analiza las líneas de código
-                    if (lineaTrim.StartsWith("using namespace std;"))
-                    {
-                        // Ignorar esta línea, ya que solo es una directiva de espacio de nombres
-                        continue;
-                    }
-
-                    // Dentro del loop que analiza las líneas de código
-                    if (lineaTrim.StartsWith("return"))
-                    {
-                        // Ignorar la instrucción return
-                        continue;
-                    }
-
-                    // Detectar funciones (declaraciones)
-                    Match matchFuncion = Regex.Match(lineaTrim, @"\b(\w+)\s+(\w+)\s*\((.*?)\)\s*{");
-                    if (matchFuncion.Success)
-                    {
-                        string tipo = matchFuncion.Groups[1].Value;
-                        string nombre = matchFuncion.Groups[2].Value;
-
-                        if (this.tablaSimbolos.ContainsKey(nombre))
-                        {
-                            this.manejadorErrores.AgregarError(i + 1, 0, $"La función '{nombre}' ya fue declarada anteriormente.");
-                        }
-                        else
-                        {
-                            this.tablaSimbolos[nombre] = new Simbolo(nombre, tipo, "global", "N/A");
-                            ambitoActual = nombre;
-                        }
-
-                        bloquesAbiertos.Push(true); // Inicia un bloque de función
-                        continue;
-                    }
-
-                    // Detectar declaraciones de variables dentro de las funciones
-                    Match matchVariable = Regex.Match(lineaTrim, @"\b(\w+)\s+(\w+)\s*(=\s*.*)");
-                    if (matchVariable.Success)
-                    {
-                        string tipoVariable = matchVariable.Groups[1].Value;
-                        string nombreVariable = matchVariable.Groups[2].Value;
-                        string valorInicial = matchVariable.Groups[3].Value.Replace("=", string.Empty).Trim();
-
-                        // Agregar la variable a la tabla de símbolos si no está ya registrada
-                        if (!this.tablaSimbolos.ContainsKey(nombreVariable))
-                        {
-                            this.tablaSimbolos[nombreVariable] = new Simbolo(nombreVariable, tipoVariable, ambitoActual, valorInicial);
-                        }
-                        else
-                        {
-                            this.manejadorErrores.AgregarError(i + 1, 0, $"La variable '{nombreVariable}' ya fue declarada anteriormente.");
-                        }
-
-                        continue;
-                    }
-
-                    // Validación de llaves de apertura y cierre
-                    if (lineaTrim.Contains("{"))
-                    {
-                        bloquesAbiertos.Push(true); // Inicia un nuevo bloque
-                    }
-
-                    if (lineaTrim.Contains("}"))
-                    {
-                        if (bloquesAbiertos.Count > 0)
-                        {
-                            bloquesAbiertos.Pop(); // Cierra un bloque
-                        }
-                        else
-                        {
-                            // Error: Llave de cierre '}' sin apertura correspondiente
-                            this.manejadorErrores.AgregarError(i + 1, lineaTrim.Length, "Error: Llave de cierre '}' sin apertura correspondiente.");
-                        }
-                    }
-                }
-
-                // Al final, si hay llaves abiertas sin cerrar, reportar error
-                if (bloquesAbiertos.Count > 0)
-                {
-                    this.manejadorErrores.AgregarError(lineas.Length + 1, 0, "Error: Falta cerrar algunas llaves '}'.");
-                }
-            });
+            this.Simbolos[name] = symbol;
         }
 
         /// <summary>
-        /// Función para calcular si la función tiene Errores.
+        /// Obtener nombre.
         /// </summary>
-        /// <returns>Tiene errores.</returns>
-        public bool TieneErrores()
+        /// <param name="name">nombre.</param>
+        /// <returns>Simbolo.</returns>
+        /// <exception cref="Exception">Excepción.</exception>
+        public Simbolo Obtener(string name)
         {
-            return this.manejadorErrores.TieneErrores();
-        }
+            if (!this.Simbolos.TryGetValue(name, out Simbolo? value))
+            {
+                throw new Exception($"Error: la variable '{name}' no está declarada.");
+            }
 
-        /// <summary>
-        /// Función para obtener errores del listado.
-        /// </summary>
-        /// <returns>Listado de errores.</returns>
-        public List<string> ObtenerErrores()
-        {
-            return this.manejadorErrores.ObtenerErrores();
-        }
-
-        /// <summary>
-        /// Mostrar o retornar la tabla de simbolos.
-        /// </summary>
-        /// <returns>tabla de simbolos.</returns>
-        public Dictionary<string, Simbolo> MostrarTabla()
-        {
-            return this.tablaSimbolos;
+            return value;
         }
     }
 }

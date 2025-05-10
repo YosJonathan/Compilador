@@ -24,7 +24,7 @@ namespace Compilador
         {
             this.respuesta = nodo;
             this.InitializeComponent();
-            MaterialUI.cargarMaterial(this);
+            MaterialUI.CargarMaterial(this);
         }
 
         /// <summary>
