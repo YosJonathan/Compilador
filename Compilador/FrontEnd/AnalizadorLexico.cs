@@ -27,13 +27,13 @@ namespace Compilador.FrontEnd
         private ManejadorErrores manejadorErrores = new ManejadorErrores();
 
         // Expresiones regulares para identificar los diferentes tokens
-        private static readonly Regex RegexIdentificador = new Regex(@"^[a-zA-Z_][a-zA-Z0-9_]*$");
-        private static readonly Regex RegexNumero = new Regex(@"^\d+(\.\d+)?$");
-        private static readonly Regex RegexOperador = new Regex(@"^[+\-*/%=<>!&|^~]+$");
-        private static readonly Regex RegexSimbolo = new Regex(@"^[{}()\[\],;.]$");
-        private static readonly Regex RegexCadenaTexto = new Regex("\"([^\"]*)\""); // Para cadenas de texto entre comillas dobles
-        private static readonly Regex RegexDirectivaPreprocesador = new Regex(@"^#\w+$");
-        private static readonly Regex RegexContenidoEntreMenores = new Regex(@"[\w.-]+\.h");
+        private static readonly Regex RegexIdentificador = new (@"^[a-zA-Z_][a-zA-Z0-9_]*$");
+        private static readonly Regex RegexNumero = new (@"^\d+(\.\d+)?$");
+        private static readonly Regex RegexOperador = new (@"^[+\-*/%=<>!&|^~]+$");
+        private static readonly Regex RegexSimbolo = new (@"^[{}()\[\],;.]$");
+        private static readonly Regex RegexCadenaTexto = new ("\"([^\"]*)\""); // Para cadenas de texto entre comillas dobles
+        private static readonly Regex RegexDirectivaPreprocesador = new (@"^#\w+$");
+        private static readonly Regex RegexContenidoEntreMenores = new (@"[\w.-]+\.h");
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AnalizadorLexico"/> class.

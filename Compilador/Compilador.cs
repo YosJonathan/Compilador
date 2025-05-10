@@ -9,6 +9,7 @@ namespace Compilador
     using global::Compilador.Modelos;
     using global::MaterialSkin.Controls;
     using Irony.Parsing;
+    using static System.Runtime.InteropServices.JavaScript.JSType;
 
     /// <summary>
     /// Clase de compilador.
@@ -89,15 +90,21 @@ namespace Compilador
         /// <param name="e">E.</param>
         private void RealizarAnalisisToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            ParseTreeNode? root = null;
             bool analisisLexicoCorrecto = this.RealizarAnalisisLexico();
-            bool analisisSintacticoCorrecto = this.RealizarAnalisisSintactico();
+            bool analisisSintacticoCorrecto = this.RealizarAnalisisSintactico(ref root);
+            bool analisisSemanticoCorrecto = this.RealizarAnalisisSemantico(root);
 
             MessageBox.Show(
-                analisisLexicoCorrecto && analisisSintacticoCorrecto
+                analisisLexicoCorrecto && analisisSintacticoCorrecto && analisisSemanticoCorrecto
                 ? "✅ Finalizo Analisis."
                 : "❌ Error en el código.");
         }
 
+        /// <summary>
+        /// Realizar analisis lexico.
+        /// </summary>
+        /// <returns>Respuesta analisis.</returns>
         private bool RealizarAnalisisLexico()
         {
             string cadenaaAnalizar = this.txtCompilador.Text;
@@ -128,7 +135,7 @@ namespace Compilador
         /// Realiza analisis sintactico.
         /// </summary>
         /// <returns>Resultado de analisis sintactico.</returns>
-        private bool RealizarAnalisisSintactico()
+        private bool RealizarAnalisisSintactico(ref ParseTreeNode? root)
         {
             this.lstErrores.Items.Clear();
 
@@ -147,6 +154,7 @@ namespace Compilador
             {
                 RespuestaSintactico formGraficos = new (tree.Root);
                 formGraficos.Show();
+                root = tree.Root;
                 return true;
             }
             else
@@ -163,6 +171,46 @@ namespace Compilador
                         $"Código: {lineaError.Trim()}"); // Mostrar la línea de código con error
                 }
 
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Realizar analisis semantico.
+        /// </summary>
+        /// <returns>Resultado de analisis.</returns>
+        private bool RealizarAnalisisSemantico(ParseTreeNode? root)
+        {
+            if (root == null)
+            {
+                this.lstErrores.Items.Add("Semantico - Error: El arbol es nulo");
+                return false;
+            }
+
+            try
+            {
+                var tablaSimbolos = new TablaSimbolos();
+                var analizador = new AnalisisSemantico();
+                analizador.AnalizarNodo(root, tablaSimbolos);
+
+                if (!analizador.TieneErrores())
+                {
+                    return true;
+                }
+                else
+                {
+                    List<string> errores = analizador.ObtenerErrores();
+                    foreach (string error in errores)
+                    {
+                        this.lstErrores.Items.Add($"Léxico - Error: {error}");
+                    }
+
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                this.lstErrores.Items.Add($"Léxico - Error: {ex.ToString()}");
                 return false;
             }
         }

@@ -41,7 +41,7 @@ namespace Compilador.FrontEnd
 
             // No terminales
             var includeDirectiva = new NonTerminal("includeDirectiva");
-            var declaracionVariable = new NonTerminal("declaracionVariable");
+            var declaracionVariable = new NonTerminal("Declaracion");
             var expresion = new NonTerminal("expresion");
             var funcion = new NonTerminal("funcion");
             var declaracionesEnBloque = new NonTerminal("declaracionesEnBloque");
