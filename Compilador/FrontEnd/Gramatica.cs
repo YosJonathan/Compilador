@@ -5,6 +5,7 @@
 namespace Compilador.FrontEnd
 {
     using Irony.Parsing;
+    using static System.Runtime.InteropServices.JavaScript.JSType;
 
     /// <summary>
     /// Clase que contiene la gramatica.
@@ -34,6 +35,10 @@ namespace Compilador.FrontEnd
             var llaveCerrar = this.ToTerm("}");
             var operadorReturn = this.ToTerm("return");
 
+            var numero = TerminalFactory.CreateCSharpNumber("numero");
+            var caracter = new StringLiteral("charLiteral", "'", StringOptions.IsChar);
+            var booleano = new RegexBasedTerminal("booleano", "true|false");
+
             var identificador = new IdentifierTerminal("identificador");
             var archivoInclude = new RegexBasedTerminal("archivoInclude", "<[a-zA-Z0-9_\\.]+>");
             var numeroEntero = new NumberLiteral("numeroEntero");
@@ -42,7 +47,6 @@ namespace Compilador.FrontEnd
             // No terminales
             var includeDirectiva = new NonTerminal("includeDirectiva");
             var declaracionVariable = new NonTerminal("Declaracion");
-            var expresion = new NonTerminal("expresion");
             var funcion = new NonTerminal("funcion");
             var declaracionesEnBloque = new NonTerminal("declaracionesEnBloque");
             var bloque = new NonTerminal("bloque");
@@ -54,6 +58,7 @@ namespace Compilador.FrontEnd
             var listaParametrosScanf = new NonTerminal("listaParametrosScanf");
             var expresionBinaria = new NonTerminal("expresionBinaria");
             var listaExpresionesPrintf = new NonTerminal("listaExpresionesPrintf");
+            var asignacion = new NonTerminal("Asignacion");
 
             var instruccionReturn = new NonTerminal("instruccionReturn");
 
@@ -86,17 +91,24 @@ namespace Compilador.FrontEnd
 
             tipoVariable.Rule = tipoInt | tipoFloat | tipoChar;
 
-            declaracionVariable.Rule = tipoVariable + identificador + puntoYComa;
+            declaracionVariable.Rule = tipoVariable + identificador + puntoYComa
+                | tipoVariable + identificador + operadorAsignacion + numeroEntero + puntoYComa
+                | tipoVariable + identificador + operadorAsignacion + caracter + puntoYComa
+                | tipoVariable + identificador + operadorAsignacion + booleano + puntoYComa;
 
-            expresion.Rule = identificador + operadorAsignacion + numeroEntero + puntoYComa
-                           | identificador + operadorAsignacion + identificador + puntoYComa
-                           | identificador + operadorSuma + identificador + puntoYComa;
+            asignacion.Rule = identificador + this.Empty + puntoYComa
+                            | identificador + operadorAsignacion + numeroEntero + puntoYComa
+                            | identificador + operadorAsignacion + caracter + puntoYComa
+                            | identificador + operadorAsignacion + booleano + puntoYComa
+                            | identificador + llaveAbrir + numeroEntero + llaveCerrar + puntoYComa
+                            | identificador + llaveAbrir + caracter + llaveCerrar + puntoYComa
+                            | identificador + llaveAbrir + booleano + llaveCerrar + puntoYComa;
 
             funcion.Rule = operadorPrintf + parentesisAbrir + cadena + parentesisCerrar + puntoYComa
                   | operadorPrintf + parentesisAbrir + cadena + coma + listaExpresionesPrintf + parentesisCerrar + puntoYComa
                   | operadorScanf + parentesisAbrir + cadena + coma + listaParametrosScanf + parentesisCerrar + puntoYComa;
 
-            instruccionCodigo.Rule = funcion | declaracionVariable | expresion | instruccionReturn;
+            instruccionCodigo.Rule = funcion | declaracionVariable | instruccionReturn | asignacion;
 
             declaracionesEnBloque.Rule = this.MakeStarRule(declaracionesEnBloque, instruccionCodigo);
 
@@ -108,6 +120,8 @@ namespace Compilador.FrontEnd
 
             // Marcar símbolos de puntuación para que no aparezcan en el árbol
             this.MarkPunctuation(";", "(", ")", ",", "&", "{", "}", "#include");
+
+            this.MarkTransient(tipoVariable);
 
             // Marcar palabras reservadas
             this.MarkReservedWords("int", "float", "char", "void", "printf", "scanf");

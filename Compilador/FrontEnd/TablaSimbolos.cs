@@ -43,14 +43,31 @@ namespace Compilador.FrontEnd
         /// <param name="name">nombre.</param>
         /// <returns>Simbolo.</returns>
         /// <exception cref="Exception">Excepción.</exception>
-        public Simbolo Obtener(string name)
+        public (Simbolo, bool) Obtener(string name)
         {
             if (!this.simbolos.TryGetValue(name, out Simbolo? value))
             {
-                throw new Exception($"Error: la variable '{name}' no está declarada.");
+                // throw new Exception($"Error: la variable '{name}' no está declarada.");
+                return (new Simbolo(), false); // La variable no esta declarada
             }
 
-            return value;
+            return (value, true);
+        }
+
+
+        /// <summary>
+        /// Existe nombre.
+        /// </summary>
+        /// <param name="name">nombre.</param>
+        /// <returns>Simbolo.</returns>
+        public bool ExisteId(string name)
+        {
+            if (this.simbolos.TryGetValue(name, out Simbolo? value))
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

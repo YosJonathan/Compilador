@@ -48,7 +48,7 @@ namespace Compilador
         private void AbrirArchivotxtToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Crear y configurar el cuadro de diálogo
-            OpenFileDialog openFileDialog = new ()
+            OpenFileDialog openFileDialog = new()
             {
                 Filter = "Archivos de texto (*.txt)|*.txt|Todos los archivos (*.*)|*.*",
                 Title = "Seleccionar un archivo de texto",
@@ -109,14 +109,14 @@ namespace Compilador
         {
             string cadenaaAnalizar = this.txtCompilador.Text;
 
-            AnalizadorLexico analizadorLexico = new ();
+            AnalizadorLexico analizadorLexico = new();
             RespuestaAnalisisLexico respuesta = analizadorLexico.Analizar(cadenaaAnalizar);
 
             // Abre el nuevo formulario y le pasa los datos
             if (!analizadorLexico.TieneErrores())
             {
-                RespuestaLexico formGraficos = new (respuesta);
-                formGraficos.Show();
+                // RespuestaLexico formGraficos = new(respuesta);
+                // formGraficos.Show();
                 return true;
             }
             else
@@ -152,8 +152,8 @@ namespace Compilador
             // Verificar si el código es válido
             if (tree.Root != null)
             {
-                RespuestaSintactico formGraficos = new (tree.Root);
-                formGraficos.Show();
+                // RespuestaSintactico formGraficos = new(tree.Root);
+                // formGraficos.Show();
                 root = tree.Root;
                 return true;
             }
@@ -191,7 +191,7 @@ namespace Compilador
             {
                 var tablaSimbolos = new TablaSimbolos();
                 var analizador = new AnalisisSemantico();
-                analizador.AnalizarNodo(root, tablaSimbolos);
+                analizador.AnalizarNodo(root);
 
                 if (!analizador.TieneErrores())
                 {
@@ -202,7 +202,7 @@ namespace Compilador
                     List<string> errores = analizador.ObtenerErrores();
                     foreach (string error in errores)
                     {
-                        this.lstErrores.Items.Add($"Léxico - Error: {error}");
+                        this.lstErrores.Items.Add($"Semántico - Error: {error}");
                     }
 
                     return false;
@@ -210,7 +210,7 @@ namespace Compilador
             }
             catch (Exception ex)
             {
-                this.lstErrores.Items.Add($"Léxico - Error: {ex.ToString()}");
+                this.lstErrores.Items.Add($"Semántico - Error: {ex}");
                 return false;
             }
         }
